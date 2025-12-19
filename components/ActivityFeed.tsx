@@ -22,6 +22,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ logs }) => {
       case 'OPERATOR_CMD': return 'PRO_CMD>';
       case 'SYSTEM_ALERT': return 'SYS_PRO!';
       case 'NETWORK_EVENT': return 'NET_FLX~';
+      case 'SOVEREIGN_PIPE': return 'PIPE_SHIELD|';
       default: return 'PRO_LOG|';
     }
   };
@@ -30,15 +31,15 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ logs }) => {
     <div className="flex-1 flex flex-col glass rounded-lg border border-red-900/10 overflow-hidden relative">
       <div className="p-4 border-b border-white/5 flex justify-between items-center bg-black/60 backdrop-blur-xl">
         <div className="flex flex-col">
-          <h3 className="text-xs font-black mono uppercase tracking-[0.2em] text-white">PRO AUDIT TRAIL</h3>
-          <span className="text-[8px] text-red-500/50 mono uppercase tracking-widest">SUPER 3MAX PRO VERIFIED RECORDS</span>
+          <h3 className="text-xs font-black mono uppercase tracking-[0.2em] text-white">SOVEREIGN AUDIT TRAIL</h3>
+          <span className="text-[8px] text-red-500/50 mono uppercase tracking-widest">LIQUIDITY & PROTECTION VERIFIED</span>
         </div>
         <div className="flex flex-col items-end">
            <div className="flex items-center gap-2">
-             <div className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping"></div>
-             <span className="text-[10px] text-white mono font-black">STABLE</span>
+             <div className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping"></div>
+             <span className="text-[10px] text-white mono font-black uppercase">Fluid</span>
            </div>
-           <span className="text-[8px] text-gray-600 mono">BUGS: 0.00%</span>
+           <span className="text-[8px] text-gray-600 mono">PROTECTION: 100.00%</span>
         </div>
       </div>
       
@@ -56,13 +57,13 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ logs }) => {
                 <span className="text-white font-bold tracking-tight">{log.actor}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-[8px] text-green-500/40 font-bold">VERIFIED_SECURE</span>
+                <span className="text-[8px] text-blue-500/40 font-bold">FLOW_VERIFIED</span>
                 <span className="text-gray-700 text-[8px] mono opacity-0 group-hover:opacity-100">#{log.id}</span>
               </div>
             </div>
             
             <div className="text-gray-400 pl-4 relative">
-              <span className="absolute left-0 text-red-600 font-black">»</span>
+              <span className={`absolute left-0 font-black ${log.category === 'SOVEREIGN_PIPE' ? 'text-blue-500' : 'text-red-600'}`}>»</span>
               <span className="text-gray-100 font-bold uppercase">{log.action}:</span>
               <span className="ml-2 text-gray-500 leading-relaxed">{log.details}</span>
             </div>
@@ -71,8 +72,8 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ logs }) => {
         
         {logs.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-gray-800 mono space-y-6">
-            <div className="w-16 h-16 border-4 border-dashed border-red-950 rounded-full animate-[spin_4s_linear_infinite]"></div>
-            <div className="animate-pulse uppercase tracking-[0.5em] text-[10px]">SYNCING WITH LOGIC CORE...</div>
+            <div className="w-16 h-16 border-4 border-dashed border-blue-950 rounded-full animate-[spin_4s_linear_infinite]"></div>
+            <div className="animate-pulse uppercase tracking-[0.5em] text-[10px]">INJECTING LIQUIDITY...</div>
           </div>
         )}
       </div>
@@ -80,8 +81,8 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ logs }) => {
       <div className="p-3 border-t border-white/5 bg-black/40 text-[9px] mono text-gray-500 flex justify-between items-center">
         <span>LOG_COUNT: {logs.length.toString().padStart(4, '0')}</span>
         <div className="flex items-center gap-2">
-           <span className="text-red-900">INTEGRITY_CHECK:</span>
-           <span className="text-green-600 font-bold">OPTIMAL</span>
+           <span className="text-blue-900 uppercase">Flow Check:</span>
+           <span className="text-green-600 font-bold">LUBRICATED</span>
         </div>
       </div>
     </div>
