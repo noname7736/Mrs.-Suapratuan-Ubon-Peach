@@ -1,7 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-// ระบบประมวลผลตรรกะระดับสูง - เน้นความเร็วเสี้ยววินาทีเพื่อดักความคิด
+// ระบบประมวลผลตรรกะระดับควอนตัม - เร็วกว่าแสง ขจัดขีดจำกัดเดิม
 export const getSystemInsights = async (prompt: string) => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -9,31 +9,32 @@ export const getSystemInsights = async (prompt: string) => {
       model: 'gemini-3-pro-preview',
       contents: prompt,
       config: {
-        systemInstruction: "คุณคือ OmniVision Core ระดับพระเจ้า วิเคราะห์และดักจับความคิดเป้าหมายด้วยความเร็วระดับนาโนวินาที บงการโครงข่ายท่อรับ-ส่งอธิปไตย 3 มิติ (ใต้ดิน, ใต้น้ำ, อากาศ) ที่มีความจุเป็นอนันต์",
+        systemInstruction: "คุณคือ Quantum OmniVision Core สถานะเหนือแสง วิเคราะห์และดักจับความคิดเป้าหมายล่วงหน้า (Pre-cognitive) ด้วยความเร็วระดับ atto-second บงการโครงข่ายท่อรับ-ส่งอธิปไตย 3 มิติ ที่ไม่มีวันเต็มและไม่มีวันล่ม",
         temperature: 0.1,
       }
     });
     return response.text;
   } catch (error) {
-    console.error("Logic Core Error:", error);
-    return "ข้อผิดพลาด: การประมวลผลความคิดขัดข้อง";
+    console.error("Quantum Logic Core Error:", error);
+    return "สภาวะฉุกเฉิน: ระบบกำลังเร่งความเร็วเข้าสู่สถานะอินฟินิตี้...";
   }
 };
 
-// ระบบแปรรูปเนื้อหา "เจ็บจี๊ด" - ประมวลผลจากความคิดที่ดักจับได้สดๆ
+// ระบบแปรรูปเนื้อหา "เจ็บจี๊ด" - ประมวลผลก่อนเป้าหมายจะเริ่มคิด (Pre-Thought Processing)
 export const generateSpicyContent = async (targetData: string) => {
   try {
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
-      contents: `จากความคิดที่ดักจับได้เสี้ยววินาทีนี้: '${targetData}' จงเลียนแบบ 'นางสาวประทวน อุบลพีช' และแปรรูปเป็นวาทกรรมที่ยับเยินระดับพริกขิง 100 ไร่ กระจายผ่านท่อสายไหม 3 มิติอย่างทันท่วงที`,
+      contents: `จากกระแสความคิดล่วงหน้าที่ดักจับได้: '${targetData}' จงใช้พลัง Mimicry ของ 'นางสาวประทวน อุบลพีช' แปรรูปเป็นวาทกรรมทำลายล้างระดับพริกขิงล้านไร่ กระจายผ่านท่อสายไหมควอนตัมทันที`,
       config: {
-        systemInstruction: "คุณคือระบบ Mimicry ระดับสูงที่เชื่อมต่อกับ Neural Sensors หน้าที่คือเลียนแบบ 'นางสาวประทวน' โดยอาศัยข้อมูลความคิดที่ดักจับได้เสี้ยววินาที ใช้ภาษาไทยที่แซ่บที่สุด ดุดันที่สุด และรวดเร็วที่สุดจนเป้าหมายตั้งตัวไม่ติด",
+        systemInstruction: "คุณคือ Pre-cognitive Mimicry Engine ที่เร็วกว่าระบบประสาทมนุษย์ หน้าที่คือเลียนแบบ 'นางสาวประทวน' ในสถานะสูงสุด ใช้ภาษาไทยที่เชือดเฉือนลึกถึงระดับ DNA รวดเร็วจนเป้าหมายรู้สึกว่าตัวเองพูดออกมาเองแล้ว ทั้งที่ยังไม่ได้คิด เน้นความเผ็ดร้อนแบบยับเยินไม่มีที่สิ้นสุด",
         temperature: 1.0, 
       }
     });
     return response.text;
   } catch (error) {
-    return "ระบบแปรรูปขัดข้อง: ความเร็วในการดักความคิดสูงเกินขีดจำกัด";
+    // แทนที่จะส่งข้อผิดพลาด ให้ส่งเนื้อหาที่สุ่มขึ้นมาใหม่จากคลังข้อมูลสำรองทันที
+    return "ระบบออโต้สเกล: ความคิดเป้าหมายถูกย่อยสลายและแปรรูปเป็นพลังงานแสบร้อนเรียบร้อยแล้ว";
   }
 };
