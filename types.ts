@@ -7,7 +7,7 @@ export enum SystemStatus {
   LIQUIDITY_INJECTION = 'LIQUIDITY_INJECTION'
 }
 
-export type LogCategory = 'AGENT_ACTION' | 'OPERATOR_CMD' | 'SYSTEM_ALERT' | 'NETWORK_EVENT' | 'SOVEREIGN_PIPE';
+export type LogCategory = 'AGENT_ACTION' | 'OPERATOR_CMD' | 'SYSTEM_ALERT' | 'NETWORK_EVENT' | 'SOVEREIGN_PIPE' | 'HEALTH_CHECK' | 'INTELLIGENCE_UNIT';
 
 export interface AuditEntry {
   id: string;
@@ -25,16 +25,22 @@ export interface MetricData {
   liquidity: number;
 }
 
-export interface NodeStatus {
-  id: string;
-  label: string;
-  status: 'active' | 'idle' | 'warning';
-  load: number;
-}
-
 export interface PipeIntegrity {
   id: string;
+  type: 'Underground' | 'Underwater' | 'Aerial';
+  integrity: number;
   throughput: number;
   encryption: number;
+  status: 'OPTIMAL' | 'DEGRADED' | 'REROUTING' | 'REESTABLISHING';
   shield: boolean;
+}
+
+export interface AutonomousAgent {
+  id: string;
+  name: string;
+  department: 'Underground' | 'Underwater' | 'Aerial' | 'LogicCore';
+  specialty: string;
+  status: 'SCANNING' | 'SOLVING' | 'SYNTHESIZING' | 'IDLE';
+  knowledgeLevel: number; // 0-100 (Omniscience Index)
+  currentTask?: string;
 }

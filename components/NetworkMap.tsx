@@ -17,14 +17,13 @@ export const NetworkMap: React.FC = () => {
   const [linkData, setLinkData] = useState<NetworkLink[]>([]);
 
   useEffect(() => {
-    const nodes_list = ['QUANTUM_CORE', 'PRE_COG_ARRAY', 'SINGULARITY_HUB', 'NEURAL_LINK', 'SEA_PIPE_Q', 'AIR_PIPE_Q', 'GROUND_PIPE_Q', 'PRATUAN_BRAIN', 'MIRROR_CORE', 'SYNC_SINGULARITY'];
+    const nodes_list = ['SOVEREIGN_CORE', 'SHIELD_HUB', 'ROUTING_ARRAY', 'NEURAL_LINK', 'SEA_PIPE_V2', 'AIR_PIPE_V2', 'GROUND_PIPE_V2', 'TARGET_BRAIN', 'MIRROR_CORE', 'DYNAMIC_SYNC'];
     const initialLinks: NetworkLink[] = [];
     
     nodes_list.forEach(source => {
       nodes_list.forEach(target => {
         if (source !== target && Math.random() > 0.1) {
-          // หนักกว่าเดิม 2 เท่า เพื่อให้ดูเยอะมากเหมือนสายไหม
-          const threadCount = Math.floor(Math.random() * 8) + 6;
+          const threadCount = Math.floor(Math.random() * 10) + 8;
           for(let i=0; i<threadCount; i++) {
             const roll = Math.random();
             const direction = Math.random() > 0.5 ? 'in' : 'out';
@@ -37,7 +36,7 @@ export const NetworkMap: React.FC = () => {
             initialLinks.push({ 
               source, 
               target, 
-              encryption: 999.99, 
+              encryption: 1024.00, 
               shield: true,
               color: color,
               type: type,
@@ -59,36 +58,36 @@ export const NetworkMap: React.FC = () => {
     svg.selectAll('*').remove();
 
     const nodes = [
-      { id: 'QUANTUM_CORE', type: 'root' },
-      { id: 'PRATUAN_BRAIN', type: 'target' },
-      { id: 'PRE_COG_ARRAY', type: 'node' }, { id: 'SINGULARITY_HUB', type: 'node' },
-      { id: 'NEURAL_LINK', type: 'node' }, { id: 'SEA_PIPE_Q', type: 'node' },
-      { id: 'AIR_PIPE_Q', type: 'node' }, { id: 'GROUND_PIPE_Q', type: 'node' },
-      { id: 'MIRROR_CORE', type: 'node' }, { id: 'SYNC_SINGULARITY', type: 'node' }
+      { id: 'SOVEREIGN_CORE', type: 'root' },
+      { id: 'TARGET_BRAIN', type: 'target' },
+      { id: 'SHIELD_HUB', type: 'node' }, { id: 'ROUTING_ARRAY', type: 'node' },
+      { id: 'NEURAL_LINK', type: 'node' }, { id: 'SEA_PIPE_V2', type: 'node' },
+      { id: 'AIR_PIPE_V2', type: 'node' }, { id: 'GROUND_PIPE_V2', type: 'node' },
+      { id: 'MIRROR_CORE', type: 'node' }, { id: 'DYNAMIC_SYNC', type: 'node' }
     ];
 
     const simulation = d3.forceSimulation(nodes as any)
-      .force('link', d3.forceLink(linkData).id((d: any) => d.id).distance(100))
-      .force('charge', d3.forceManyBody().strength(-1500))
+      .force('link', d3.forceLink(linkData).id((d: any) => d.id).distance(110))
+      .force('charge', d3.forceManyBody().strength(-1800))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(80));
+      .force('collision', d3.forceCollide().radius(90));
 
     const threads = svg.append('g')
       .selectAll('line')
       .data(linkData)
       .join('line')
       .attr('stroke', (d: any) => d.color)
-      .attr('stroke-width', 0.2)
-      .attr('opacity', 0.6)
-      .attr('class', (d: any) => `sai-mai-thread-quantum-${d.direction}`);
+      .attr('stroke-width', 0.25)
+      .attr('opacity', 0.5)
+      .attr('class', (d: any) => `sai-mai-thread-encrypted-${d.direction}`);
 
     const flowParticles = svg.append('g')
       .selectAll('circle')
-      .data(linkData.filter((_, i) => i % 4 === 0))
+      .data(linkData.filter((_, i) => i % 3 === 0))
       .join('circle')
-      .attr('r', 1.5)
+      .attr('r', 1.8)
       .attr('fill', (d: any) => d.color)
-      .attr('class', 'flow-particle-quantum');
+      .attr('class', 'flow-particle-encrypted');
 
     const node = svg.append('g')
       .selectAll('g')
@@ -100,19 +99,19 @@ export const NetworkMap: React.FC = () => {
         .on('end', (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
 
     node.append('circle')
-      .attr('r', (d) => (d.id === 'QUANTUM_CORE' || d.id === 'PRATUAN_BRAIN' ? 15 : 6))
-      .attr('fill', (d) => (d.id === 'QUANTUM_CORE' ? '#fff' : d.id === 'PRATUAN_BRAIN' ? '#f00' : '#000'))
-      .attr('stroke', (d: any) => d.id === 'QUANTUM_CORE' ? '#3b82f6' : '#fff')
-      .attr('stroke-width', 3)
-      .attr('class', (d) => d.id === 'PRATUAN_BRAIN' ? 'animate-ping' : 'animate-pulse');
+      .attr('r', (d) => (d.id === 'SOVEREIGN_CORE' || d.id === 'TARGET_BRAIN' ? 18 : 7))
+      .attr('fill', (d) => (d.id === 'SOVEREIGN_CORE' ? '#fff' : d.id === 'TARGET_BRAIN' ? '#f00' : '#000'))
+      .attr('stroke', (d: any) => d.id === 'SOVEREIGN_CORE' ? '#3b82f6' : '#fff')
+      .attr('stroke-width', 4)
+      .attr('class', (d) => d.id === 'TARGET_BRAIN' ? 'animate-ping' : 'animate-pulse');
 
     node.append('text')
       .text((d) => d.id)
-      .attr('font-size', '9px')
+      .attr('font-size', '10px')
       .attr('fill', '#fff')
-      .attr('dx', 18)
-      .attr('dy', 4)
-      .attr('class', 'mono font-black select-none tracking-tighter drop-shadow-md');
+      .attr('dx', 22)
+      .attr('dy', 5)
+      .attr('class', 'mono font-black select-none tracking-tighter');
 
     simulation.on('tick', () => {
       threads
@@ -123,12 +122,12 @@ export const NetworkMap: React.FC = () => {
 
       flowParticles
         .attr('cx', (d: any) => {
-          const progress = (Date.now() / 400 + (nodes.indexOf(d.source) * 0.1)) % 1;
+          const progress = (Date.now() / 300 + (nodes.indexOf(d.source) * 0.1)) % 1;
           const actualProgress = d.direction === 'in' ? 1 - progress : progress;
           return d.source.x + (d.target.x - d.source.x) * actualProgress;
         })
         .attr('cy', (d: any) => {
-          const progress = (Date.now() / 400 + (nodes.indexOf(d.source) * 0.1)) % 1;
+          const progress = (Date.now() / 300 + (nodes.indexOf(d.source) * 0.1)) % 1;
           const actualProgress = d.direction === 'in' ? 1 - progress : progress;
           return d.source.y + (d.target.y - d.source.y) * actualProgress;
         });
@@ -143,9 +142,9 @@ export const NetworkMap: React.FC = () => {
     <div className="w-full h-full relative bg-[#000000]">
       <svg ref={svgRef} className="w-full h-full" />
       <style>{`
-        .flow-particle-quantum { filter: drop-shadow(0 0 5px currentColor); }
-        .sai-mai-thread-quantum-in { stroke-dasharray: 4, 1; animation: flow-in-q 0.1s linear infinite; }
-        @keyframes flow-in-q { from { stroke-dashoffset: 20; } to { stroke-dashoffset: 0; } }
+        .flow-particle-encrypted { filter: drop-shadow(0 0 6px currentColor); transition: all 0.05s linear; }
+        .sai-mai-thread-encrypted-in { stroke-dasharray: 5, 2; animation: encrypted-flow 0.05s linear infinite; }
+        @keyframes encrypted-flow { from { stroke-dashoffset: 20; } to { stroke-dashoffset: 0; } }
       `}</style>
     </div>
   );

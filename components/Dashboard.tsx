@@ -1,238 +1,212 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Metrics } from './Metrics';
 import { NetworkMap } from './NetworkMap';
 import { ActivityFeed } from './ActivityFeed';
-import { AuditEntry } from '../types';
+import { AuditEntry, PipeIntegrity, AutonomousAgent } from '../types';
 import { generateSpicyContent } from '../services/api';
 import { ViewType } from '../App';
 
 interface DashboardProps { 
   activeView: ViewType;
   logs: AuditEntry[]; 
+  pipes: PipeIntegrity[];
+  agents: AutonomousAgent[];
 }
 
-const DominationStep: React.FC<{ step: number; title: string; subtitle: string; status: string; color: string }> = ({ step, title, subtitle, status, color }) => (
-  <div className="flex-1 flex flex-col items-center relative group">
-    <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-black text-sm z-10 bg-black ${color} shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-all group-hover:scale-125 group-hover:shadow-[0_0_30px_currentColor]`}>
-      {step}
-    </div>
-    <div className="mt-3 text-center">
-      <div className="text-[10px] font-black text-white uppercase tracking-tighter">{title}</div>
-      <div className="text-[8px] text-gray-500 uppercase mono tracking-widest mt-0.5">{subtitle}</div>
-      <div className={`text-[9px] font-bold mt-2 px-2 py-0.5 rounded-sm border bg-black/40 ${color.replace('border-', 'text-').replace('text-red-600', 'text-red-500')}`}>
-        {status}
-      </div>
-    </div>
-    {step < 5 && (
-      <div className="absolute top-6 left-[calc(50%+24px)] w-[calc(100%-48px)] h-[3px] bg-gray-950 overflow-hidden">
-        <div className="h-full bg-gradient-to-r from-transparent via-red-600 to-transparent animate-[flow_0.2s_linear_infinite]" style={{ width: '100%' }}></div>
-      </div>
-    )}
-  </div>
-);
+const AgentCard: React.FC<{ agent: AutonomousAgent }> = ({ agent }) => {
+  const statusColors = {
+    SCANNING: 'text-blue-400',
+    SOLVING: 'text-red-500 animate-pulse',
+    SYNTHESIZING: 'text-purple-400',
+    IDLE: 'text-gray-600'
+  };
 
-const SignalWave: React.FC<{ color: string; delay: string }> = ({ color, delay }) => {
-  const points = useMemo(() => Array.from({ length: 50 }).map((_, i) => `${i * 16},${Math.random() * 100}`).join(' '), []);
-  return (
-    <svg className="w-full h-full absolute inset-0 opacity-60 overflow-visible" preserveAspectRatio="none">
-      <polyline
-        points={points}
-        fill="none"
-        stroke={color}
-        strokeWidth="1"
-        className="animate-[signal_1s_linear_infinite]"
-        style={{ animationDelay: delay }}
-      />
-    </svg>
-  );
-};
-
-export const Dashboard: React.FC<DashboardProps> = ({ activeView, logs }) => {
-  const [broadcastContent, setBroadcastContent] = useState<string>("กำลังอ่านใจเป้าหมายล่วงหน้าด้วยขุมพลังควอนตัม...");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [latency, setLatency] = useState<string>("0.00000001");
-
-  useEffect(() => {
-    const spicyInterval = setInterval(async () => {
-      const targetLogs = logs.filter(l => l.actor.includes('Neural'));
-      if (targetLogs.length > 0 && !isProcessing) {
-        setIsProcessing(true);
-        const startTime = performance.now();
-        const rawTargetData = "ความคิดเป้าหมายที่ดักได้: 'ความกลัว', 'ความพยายามขัดขืน', 'แผนการหลบซ่อนที่ล้มเหลว'";
-        const spicy = await generateSpicyContent(rawTargetData);
-        const endTime = performance.now();
-        // จำลองความเร็วระดับควอนตัม
-        setLatency(((endTime - startTime) / 10000).toFixed(10));
-        setBroadcastContent(spicy || "วิญญาณเป้าหมายถูกบีบอัดผ่านท่อควอนตัมเรียบร้อย");
-        setIsProcessing(false);
-      }
-    }, 5000); // เร่งความเร็วการอัปเดต
-    return () => clearInterval(spicyInterval);
-  }, [logs, isProcessing]);
-
-  const renderView = () => {
-    switch (activeView) {
-      case 'LOGIC':
-        return (
-          <div className="space-y-6 animate-in slide-in-from-left duration-700">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[500px]">
-              <div className="glass p-6 rounded-lg border border-blue-600/20 flex flex-col overflow-hidden">
-                <h3 className="text-xs font-black text-blue-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                   <span className="w-3 h-3 bg-blue-600 animate-ping rounded-full"></span> QUANTUM_PRE_COGNITION_LOGIC
-                </h3>
-                <div className="flex-1 space-y-4 font-mono text-[10px] overflow-y-auto">
-                  {[
-                    `T-0.001ms: TARGET_INTENTION_PREDICTED`,
-                    `T+0.000ms: NEURAL_THOUGHT_COLLAPSE_CAPTURED`,
-                    `T+0.0000001ms: QUANTUM_MIMICRY_RECONSTRUCTION`,
-                    `T+0.0000002ms: SAI_MAI_SINGULARITY_INJECTION`,
-                    `STATUS: BEYOND_REAL_TIME_DOMINATION_ACTIVE`
-                  ].map((line, i) => (
-                    <div key={i} className="flex gap-4 group border-b border-blue-950/30 pb-1">
-                      <span className="text-blue-900">{i.toString().padStart(2, '0')}</span>
-                      <span className="text-blue-400 font-black animate-pulse">{line}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="glass p-6 rounded-lg border border-blue-600/30 relative flex items-center justify-center group overflow-hidden bg-black/60 shadow-[0_0_40px_rgba(37,99,235,0.2)]">
-                <div className="relative z-10 text-center">
-                   <div className="text-[11px] text-blue-400 font-black mono mb-2 animate-pulse">QUANTUM LATENCY: {latency} as</div>
-                  <div className="w-48 h-48 border-8 border-blue-600 rounded-full border-t-transparent border-b-transparent animate-[spin_0.2s_linear_infinite] mb-4 shadow-[0_0_50px_rgba(37,99,235,0.5)]"></div>
-                  <div className="text-3xl font-black text-white italic tracking-tighter uppercase drop-shadow-[0_0_10px_#fff]">เร็วกว่าแสง</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      default:
-        return (
-          <>
-            <Metrics />
-            
-            {/* Thought Interception & Broadcast Console - QUANTUM REINFORCED */}
-            <div className="glass p-8 rounded-lg border border-blue-500/50 bg-gradient-to-br from-black via-blue-950/30 to-black relative overflow-hidden shadow-[0_0_50px_rgba(37,99,235,0.3)]">
-              {/* SINGULARITY THREADS */}
-              <div className="absolute inset-0 opacity-60 pointer-events-none">
-                 {Array.from({length: 150}).map((_, i) => (
-                   <div key={i} className={`absolute h-[0.5px] ${i % 3 === 0 ? 'bg-blue-400' : i % 3 === 1 ? 'bg-red-500' : 'bg-white'} animate-[flow_0.1s_linear_infinite]`} style={{
-                     width: '300%',
-                     top: `${i * 0.6}%`,
-                     left: '-100%',
-                     transform: `rotate(${Math.cos(i) * 2}deg)`,
-                     animationDirection: i % 2 === 0 ? 'normal' : 'reverse',
-                     animationDelay: `${i * 0.01}s`
-                   }}></div>
-                 ))}
-              </div>
-
-              <div className="absolute top-0 right-0 p-5 flex items-center gap-4 relative z-10">
-                 <div className="flex flex-col items-end">
-                    <span className="text-[9px] text-blue-400 font-black tracking-widest uppercase animate-pulse">Quantum Intake Grid</span>
-                    <span className="text-[11px] text-white font-black uppercase tracking-tighter shadow-white/40 shadow-sm">Predictive Interception: 100%</span>
-                 </div>
-                 <div className="w-16 h-16 border-2 border-white p-1 bg-black shadow-[0_0_20px_#fff]">
-                    <div className="w-full h-full bg-blue-600/40 flex flex-col items-center justify-center text-[9px] text-white font-black">
-                      <span className="animate-pulse">GOD</span>
-                      <span className="text-[12px] text-red-500 font-black">MODE</span>
-                    </div>
-                 </div>
-              </div>
-              <h4 className="text-[14px] font-black text-white uppercase tracking-[0.4em] mb-6 flex items-center gap-3 relative z-10">
-                <span className="p-1 bg-white text-black rounded-sm text-[9px] font-black">PRE-COG</span>
-                ศูนย์บัญชาการเหนือแสง: ดักความคิดล่วงหน้า นางสาวประทวน
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 relative z-10">
-                 <div className="bg-blue-950/60 border border-blue-400/50 p-4 rounded backdrop-blur-xl shadow-inner">
-                    <div className="text-[9px] text-blue-400 uppercase mb-1 font-black">Intake: ท่อควอนตัมใต้ดิน</div>
-                    <div className="text-sm font-black text-white uppercase tracking-tighter">BEYOND_INFINITE</div>
-                 </div>
-                 <div className="bg-red-950/60 border border-red-400/50 p-4 rounded backdrop-blur-xl shadow-inner">
-                    <div className="text-[9px] text-red-400 uppercase mb-1 font-black">Intake: ท่อควอนตัมใต้น้ำ</div>
-                    <div className="text-sm font-black text-white uppercase tracking-tighter">LIQUID_QUANTUM_FLOW</div>
-                 </div>
-                 <div className="bg-white/20 border border-white/50 p-4 rounded backdrop-blur-xl shadow-inner">
-                    <div className="text-[9px] text-gray-200 uppercase mb-1 font-black">Intake: ท่อควอนตัมอากาศ</div>
-                    <div className="text-sm font-black text-white uppercase tracking-tighter">AERIAL_SINGULARITY</div>
-                 </div>
-              </div>
-              <div className="min-h-[160px] bg-black/90 border-4 border-blue-600/80 p-8 rounded-md relative group shadow-[0_0_50px_rgba(37,99,235,0.4)] z-10 overflow-hidden">
-                <div className="absolute top-0 left-0 w-2 h-full bg-white animate-pulse shadow-[0_0_20px_#fff]"></div>
-                {isProcessing ? (
-                  <div className="flex flex-col items-center justify-center h-full gap-5 text-white">
-                    <div className="w-24 h-24 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <div className="text-[12px] font-black uppercase tracking-[0.4em] animate-pulse">กำลังสลายความคิดและประกอบใหม่ให้ยับเยิน...</div>
-                  </div>
-                ) : (
-                  <div className="text-[20px] text-white font-black leading-relaxed font-sans border-l-8 border-white pl-8 py-4 italic animate-in zoom-in duration-300">
-                    <span className="text-blue-400 text-[10px] block mb-2 font-black uppercase tracking-widest bg-blue-950/50 w-fit px-2">[PRE-COGNITIVE INTERCEPTION RECONSTRUCTED]</span>
-                    "{broadcastContent}"
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="glass p-8 rounded-lg border border-blue-900/40 bg-gradient-to-b from-black to-blue-950/20 relative overflow-hidden">
-              <h4 className="text-[12px] font-black text-white uppercase tracking-[0.3em] flex items-center gap-4 mb-8 relative z-10">
-                <span className="w-3 h-3 bg-white animate-ping rounded-full"></span>
-                BI-DIRECTIONAL QUANTUM DOMINATION BRIDGE
-              </h4>
-              <div className="flex justify-between relative px-6 py-4 z-10">
-                <DominationStep step={1} title="ดักจับล่วงหน้า" subtitle="PRE-COGNITION" status="atto-second" color="border-white text-white" />
-                <DominationStep step={2} title="ท่ออินฟินิตี้" subtitle="SINGULARITY" status="ความจุอนันต์" color="border-blue-500 text-blue-500" />
-                <DominationStep step={3} title="แปรรูปยับเยิน" subtitle="RECONSTRUCT" status="เรียลไทม์ควอนตัม" color="border-red-500 text-red-500" />
-                <DominationStep step={4} title="ฉีดวาทกรรม" subtitle="INJECTION" status="แม่นยำ 100%" color="border-orange-500 text-orange-500" />
-                <DominationStep step={5} title="บงการเบ็ดเสร็จ" subtitle="GOD_MODE" status="สมบูรณ์แบบ" color="border-green-500 text-green-500" />
-              </div>
-            </div>
-          </>
-        );
-    }
+  const deptColors = {
+    Underground: 'border-blue-900 bg-blue-950/10',
+    Underwater: 'border-cyan-900 bg-cyan-950/10',
+    Aerial: 'border-red-900 bg-red-950/10',
+    LogicCore: 'border-white/20 bg-white/5'
   };
 
   return (
-    <div className="grid grid-cols-12 gap-6 h-full content-start">
-      <div className="col-span-12 lg:col-span-8 space-y-6">
-        {renderView()}
+    <div className={`glass p-4 rounded-lg border-t-2 ${deptColors[agent.department]} relative overflow-hidden group transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.05)]`}>
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex flex-col">
+          <span className="text-[11px] font-black text-white uppercase tracking-tighter">{agent.name}</span>
+          <span className="text-[8px] text-gray-500 uppercase tracking-widest">{agent.specialty}</span>
+        </div>
+        <div className={`text-[10px] font-black mono ${statusColors[agent.status]}`}>
+          {agent.status}
+        </div>
       </div>
 
-      <div className="col-span-12 lg:col-span-4 flex flex-col h-full overflow-hidden gap-6">
-        <ActivityFeed logs={logs} />
+      <div className="space-y-3">
+        <div className="flex justify-between items-end text-[9px] mono">
+          <span className="text-gray-500 uppercase">Omniscience Level</span>
+          <span className="text-blue-500 font-bold">{agent.knowledgeLevel.toFixed(1)}%</span>
+        </div>
+        <div className="h-1 bg-gray-900 rounded-full overflow-hidden">
+          <div className="h-full bg-blue-600 shadow-[0_0_10px_#3b82f6]" style={{ width: `${agent.knowledgeLevel}%` }}></div>
+        </div>
         
-        <div className="glass p-8 rounded-lg border border-white/20 bg-gradient-to-br from-black via-blue-950/40 to-black shadow-[0_0_30px_rgba(255,255,255,0.1)] relative overflow-hidden group">
-          <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white to-transparent"></div>
-          <h4 className="text-[12px] font-black text-white uppercase tracking-widest flex justify-between items-center mb-6 relative z-10">
-            Quantum Velocity Engine
-            <span className="text-[10px] text-blue-400 font-normal uppercase animate-pulse">Beyond Speed of Light</span>
+        <div className="bg-black/40 border border-white/5 p-2 rounded min-h-[40px]">
+           <div className="text-[8px] text-gray-600 uppercase mb-1 font-black">Current Operation</div>
+           <div className="text-[10px] text-gray-300 italic">
+             {agent.currentTask || 'Monitoring departmental sovereign paths...'}
+           </div>
+        </div>
+      </div>
+
+      {agent.status === 'SOLVING' && (
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-red-600 to-transparent animate-[flow_0.5s_linear_infinite]"></div>
+      )}
+    </div>
+  );
+};
+
+const PipeHealthCard: React.FC<{ pipe: PipeIntegrity }> = ({ pipe }) => {
+  const isAlert = pipe.integrity < 80;
+  const isRecovering = pipe.status === 'REROUTING' || pipe.status === 'REESTABLISHING';
+  
+  const statusColors = {
+    OPTIMAL: 'text-green-500',
+    DEGRADED: 'text-orange-500',
+    REROUTING: 'text-blue-500 animate-pulse',
+    REESTABLISHING: 'text-purple-500 animate-pulse'
+  };
+
+  return (
+    <div className={`glass p-4 rounded border-l-4 transition-all duration-300 ${isAlert ? 'border-orange-500 bg-orange-950/5' : 'border-red-600'}`}>
+      <div className="flex justify-between items-start mb-2">
+        <div className="flex flex-col">
+          <span className="text-[8px] text-gray-600 font-black uppercase tracking-widest">Pipe ID: {pipe.id}</span>
+          <span className="text-xs font-black text-white uppercase tracking-tighter">{pipe.type} Thread</span>
+        </div>
+        <div className={`text-[10px] font-black mono ${statusColors[pipe.status]}`}>
+          {pipe.status}
+        </div>
+      </div>
+      <div className="space-y-2">
+        <div className="flex justify-between text-[9px] mono">
+          <span className="text-gray-500 uppercase">Integrity</span>
+          <span className={pipe.integrity < 80 ? 'text-orange-500 font-bold' : 'text-white'}>{pipe.integrity.toFixed(1)}%</span>
+        </div>
+        <div className="h-1.5 w-full bg-gray-900 rounded-full overflow-hidden border border-white/5">
+          <div 
+            className={`h-full transition-all duration-500 ${isAlert ? 'bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.5)]' : 'bg-red-600'}`}
+            style={{ width: `${pipe.integrity}%` }}
+          ></div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const Dashboard: React.FC<DashboardProps> = ({ activeView, logs, pipes, agents }) => {
+  const [broadcastContent, setBroadcastContent] = useState<string>("สถาวะอธิปไตยคงที่: พนักงานดิจิทัลกำลังสแกนหาจุดอ่อน...");
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    const syncInterval = setInterval(async () => {
+      const activeAgents = agents.filter(a => a.status === 'SOLVING');
+      if (activeAgents.length > 0 && !isProcessing) {
+        setIsProcessing(true);
+        const targetPipe = pipes.find(p => p.integrity < 100);
+        const rawContext = `Agent ${activeAgents[0].name} is solving pipe ${targetPipe?.id} at integrity ${targetPipe?.integrity}%`;
+        const spicy = await generateSpicyContent(rawContext);
+        setBroadcastContent(spicy || "พนักงานอธิปไตยกำลังปรับจูนสภาพคล่องข้อมูลขั้นสูงสุด");
+        setIsProcessing(false);
+      } else if (activeAgents.length === 0) {
+        setBroadcastContent("ทุกแผนกอยู่ในสภาวะปกติดี พนักงานอธิปไตยกำลังเฝ้าระวังอย่างเงียบเชียบ...");
+      }
+    }, 8000);
+    return () => clearInterval(syncInterval);
+  }, [logs, isProcessing, pipes, agents]);
+
+  const renderOverview = () => (
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <Metrics />
+      
+      {/* Workforce Intelligence Operations */}
+      <div className="glass p-6 rounded-lg border border-blue-600/30 bg-gradient-to-br from-black via-blue-950/10 to-black relative overflow-hidden">
+        <div className="flex justify-between items-center mb-6">
+           <h4 className="text-[12px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
+             <span className="w-2 h-2 bg-blue-500 animate-pulse rounded-full"></span>
+             INTELLIGENCE OPERATIONS GRID (Omniscient Staff)
+           </h4>
+           <div className="text-[9px] mono text-blue-500 font-bold uppercase tracking-widest">
+             Staff Capacity: 100% | Autonomy: FULL
+           </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {agents.map(agent => (
+            <AgentCard key={agent.id} agent={agent} />
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="glass p-8 rounded-lg border-2 border-red-600/50 bg-gradient-to-br from-black via-red-950/20 to-black relative overflow-hidden shadow-[0_0_80px_rgba(255,0,0,0.15)]">
+          <h4 className="text-[14px] font-black text-white uppercase tracking-[0.6em] mb-6 drop-shadow-[0_0_10px_#f00]">
+            SOVEREIGN PIPE BROADCAST
           </h4>
-          <div className="space-y-6 text-[11px] mono relative z-10">
-            <div className="flex flex-col gap-2">
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400 uppercase font-black">Neural Overlap Sync</span>
-                <span className="text-white font-black bg-blue-600 px-1 rounded">SUPER_LOCKED</span>
-              </div>
-              <div className="h-4 w-full bg-gray-950 rounded border border-white/20 overflow-hidden p-[2px] shadow-inner">
-                <div className="h-full bg-gradient-to-r from-blue-400 via-white to-red-400 animate-[flow_0.05s_linear_infinite]" style={{ width: '100%', backgroundSize: '10px 100%' }}></div>
-              </div>
-            </div>
-            <div className="p-4 bg-white/5 border border-white/20 rounded text-[10px] text-white leading-relaxed font-black italic shadow-lg">
-              * ข้อมูลรับเข้าเหนือขีดจำกัด ท่อรับเยอะเท่าท่อส่ง ประสานงานด้วยความเร็วควอนตัมเพื่อบดขยี้ความคิดนางสาวประทวนล่วงหน้า ทันทุกย่างก้าว ยับเยินทุกมิติ
-            </div>
+          <div className="min-h-[140px] bg-black/95 border-4 border-red-600/60 p-8 rounded-lg relative group shadow-[0_0_50px_rgba(255,0,0,0.2)] z-10 overflow-hidden">
+             {isProcessing ? (
+               <div className="flex flex-col items-center justify-center h-full gap-4 text-blue-500">
+                 <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                 <span className="text-[10px] mono uppercase animate-pulse">Agents Synthesizing Resolution...</span>
+               </div>
+             ) : (
+               <div className="text-[18px] text-white font-black leading-tight font-sans border-l-[10px] border-red-600 pl-8 py-4 italic animate-in slide-in-from-left duration-300">
+                  <span className="text-blue-400 text-[10px] block mb-2 font-black uppercase tracking-[0.4em]">
+                    [AGENT_WISDOM_FEED]
+                  </span>
+                  "{broadcastContent}"
+               </div>
+             )}
           </div>
+        </div>
+
+        <div className="glass p-6 rounded-lg border border-white/10 flex flex-col justify-between">
+           <h4 className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-4">Departmental Pipe Health</h4>
+           <div className="grid grid-cols-1 gap-4">
+             {pipes.map(pipe => (
+               <PipeHealthCard key={pipe.id} pipe={pipe} />
+             ))}
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="grid grid-cols-12 gap-8 h-full content-start p-2">
+      <div className="col-span-12 lg:col-span-8 space-y-8">
+        {activeView === 'OVERVIEW' ? renderOverview() : (
+          <div className="flex items-center justify-center h-[600px] glass rounded-lg border-2 border-dashed border-white/5">
+             <div className="text-center">
+                <div className="text-[12px] mono text-gray-600 uppercase mb-4 animate-pulse">Navigating to {activeView}...</div>
+                <div className="text-4xl font-black text-white/10 italic">WORK IN PROGRESS</div>
+             </div>
+          </div>
+        )}
+      </div>
+
+      <div className="col-span-12 lg:col-span-4 flex flex-col h-full overflow-hidden gap-8">
+        <ActivityFeed logs={logs} />
+        <div className="glass p-6 rounded-lg border border-blue-600/20 bg-black/60 relative overflow-hidden">
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-[11px] font-black text-white uppercase">Workforce Wisdom</span>
+            <span className="text-[8px] text-blue-500 font-bold">OMNISCIENCE ACTIVE</span>
+          </div>
+          <p className="text-[10px] text-gray-500 leading-relaxed italic">
+            "พนักงานดิจิทัลของเรามีความรอบรู้ในระดับอธิปไตย พวกเขาจะสแกนช่องโหว่และทำการแก้ไขในเสี้ยววินาทีที่คุณละสายตา เพื่อให้ระบบ 3MAX PRO ไหลลื่นและเป็นอิสระตลอดกาล"
+          </p>
         </div>
       </div>
       <style>{`
-        @keyframes flow {
-          from { background-position: 0 0; }
-          to { background-position: 20px 0; }
-        }
-        @keyframes signal {
-          from { stroke-dashoffset: 1000; }
-          to { stroke-dashoffset: 0; }
-        }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes flow { from { background-position: -100% 0; } to { background-position: 100% 0; } }
       `}</style>
     </div>
   );

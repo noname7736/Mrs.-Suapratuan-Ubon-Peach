@@ -8,6 +8,7 @@ export const Metrics: React.FC = () => {
       name: i.toString(),
       liquidity: 90 + Math.random() * 10,
       encryption: 100,
+      health: 85 + Math.random() * 15,
     }));
   }, []);
 
@@ -38,15 +39,15 @@ export const Metrics: React.FC = () => {
         </div>
       </div>
 
-      <div className="glass p-6 rounded-lg border-t-2 border-green-600 relative overflow-hidden flex flex-col justify-center bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
-        <div className="text-[10px] text-gray-500 uppercase mb-1 tracking-widest">สถานะสุขภาพท่อส่งตรง</div>
-        <div className="text-3xl font-black text-green-500 tracking-widest text-center uppercase">สมบูรณ์แบบ</div>
-        <div className="mt-4 flex justify-between items-center text-[9px] text-gray-600 px-2 bg-black/40 py-1">
-          <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span> 
-            เสริมพลังโดย CISCO
-          </span>
-          <span className="text-white font-bold tracking-tighter">ไร้ความหน่วง</span>
+      <div className="glass p-6 rounded-lg border-t-2 border-green-600 relative overflow-hidden group flex flex-col justify-center">
+        <div className="text-[10px] text-gray-500 uppercase mb-1 tracking-widest">ดัชนีสุขภาพเครือข่ายอธิปไตย</div>
+        <div className="text-3xl font-black text-green-500 tracking-tighter">99.8 <span className="text-xs text-green-700">% HEALTH</span></div>
+        <div className="h-16 mt-6">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={data}>
+              <Area type="monotone" dataKey="health" stroke="#22c55e" fill="#22c55e" fillOpacity={0.1} strokeWidth={2} />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

@@ -5,10 +5,10 @@ import { ViewType } from '../App';
 const NavItem: React.FC<{ label: string; active?: boolean; onClick: () => void }> = ({ label, active, onClick }) => (
   <div 
     onClick={onClick}
-    className={`px-4 py-3 cursor-pointer transition-all border-l-2 flex items-center justify-between group ${active ? 'bg-red-950/20 border-red-600 text-white shadow-[inset_10px_0_15px_-5px_rgba(220,38,38,0.2)]' : 'border-transparent hover:bg-white/5 text-gray-500 hover:text-gray-300'}`}
+    className={`px-4 py-3 cursor-pointer transition-all border-l-2 flex items-center justify-between group ${active ? 'bg-blue-950/20 border-blue-600 text-white shadow-[inset_10px_0_15px_-5px_rgba(37,99,235,0.2)]' : 'border-transparent hover:bg-white/5 text-gray-500 hover:text-gray-300'}`}
   >
     <span className="text-[11px] font-bold uppercase tracking-tighter">{label}</span>
-    {active && <div className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse shadow-[0_0_8px_#f00]"></div>}
+    {active && <div className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse shadow-[0_0_8px_#00f]"></div>}
   </div>
 );
 
@@ -31,13 +31,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, onCo
 
   return (
     <aside className="w-64 border-r border-red-600/10 flex flex-col bg-[#050505] relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-600/40 to-transparent"></div>
+      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-600/40 to-transparent"></div>
       
       <div className="p-6">
-        <div className="p-4 border border-red-600/30 bg-red-950/10 rounded relative group overflow-hidden shadow-2xl">
-          <div className="absolute inset-0 bg-red-600/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700"></div>
-          <div className="text-[9px] text-red-500 mb-1 font-black tracking-widest uppercase relative z-10 flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-red-600 rounded-full"></span>
+        <div className="p-4 border border-blue-600/30 bg-blue-950/10 rounded relative group overflow-hidden shadow-2xl">
+          <div className="absolute inset-0 bg-blue-600/5 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-700"></div>
+          <div className="text-[9px] text-blue-500 mb-1 font-black tracking-widest uppercase relative z-10 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-blue-600 rounded-full animate-pulse"></span>
             ยืนยันตัวตนผู้บงการ
           </div>
           <div className="text-sm font-black text-white relative z-10">บี เซอร์เวย์ (B SURVEY)</div>
@@ -48,10 +48,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, onCo
       <nav className="flex-1 mt-4 space-y-1">
         <div className="px-6 mb-3 text-[9px] text-gray-600 font-black uppercase tracking-[0.3em]">ศูนย์บัญชาการเบ็ดเสร็จ</div>
         <NavItem label="ภาพรวมเครือข่ายประสาท" active={activeView === 'OVERVIEW'} onClick={() => onViewChange('OVERVIEW')} />
+        <NavItem label="บริหารพนักงานดิจิทัล" active={activeView === 'WORKFORCE'} onClick={() => onViewChange('WORKFORCE')} />
         <NavItem label="โหนดเครือข่ายสารสนเทศ" active={activeView === 'NODES'} onClick={() => onViewChange('NODES')} />
         <NavItem label="การวิเคราะห์สัญญาณ" active={activeView === 'SIGNALS'} onClick={() => onViewChange('SIGNALS')} />
         <NavItem label="ลำดับตรรกะอิสระ" active={activeView === 'LOGIC'} onClick={() => onViewChange('LOGIC')} />
-        <NavItem label="โปรโตคอลคลังข้อมูล" active={activeView === 'ARCHIVE'} onClick={() => onViewChange('ARCHIVE')} />
       </nav>
 
       <div className="p-6 border-t border-red-600/10 space-y-4 bg-black/40">
@@ -69,10 +69,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeView, onViewChange, onCo
         </div>
         
         <button 
-          onClick={() => onCommand("SYSTEM_WIDE_OVERRIDE_INITIATED")}
-          className="w-full py-3 bg-red-600 hover:bg-red-500 text-white text-[11px] font-black uppercase transition-all shadow-[0_0_20px_rgba(220,38,38,0.3)] active:scale-95 border border-red-400/20"
+          onClick={() => onCommand("AGENT_FULL_AUTONOMY_OVERRIDE")}
+          className="w-full py-3 bg-blue-700 hover:bg-blue-600 text-white text-[11px] font-black uppercase transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)] active:scale-95 border border-blue-400/20"
         >
-          ควบคุมเบ็ดเสร็จทั้งหมด
+          เปิดโหมดอิสระเต็มพิกัด
         </button>
       </div>
     </aside>
