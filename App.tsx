@@ -8,7 +8,7 @@ import { SystemStatus, AuditEntry, LogCategory } from './types';
 const App: React.FC = () => {
   const [status, setStatus] = useState<SystemStatus>(SystemStatus.OPERATIONAL);
   const [isBooting, setIsBooting] = useState(true);
-  const [lastUpdate, setLastUpdate] = useState<string>(new Date().toLocaleTimeString());
+  const [lastUpdate, setLastUpdate] = useState<string>(new Date().toLocaleTimeString('th-TH'));
   const [auditLogs, setAuditLogs] = useState<AuditEntry[]>([]);
 
   const addAuditLog = useCallback((
@@ -33,21 +33,27 @@ const App: React.FC = () => {
   useEffect(() => {
     const bootTimer = setTimeout(() => {
       setIsBooting(false);
-      addAuditLog('SYSTEM_ALERT', 'LIQUIDITY_MOD', 'UPGRADE_APPLIED', 'SUPER 3MAX PRO: LIQUIDITY INJECTION & SOVEREIGN SHIELD ACTIVE.', 'critical');
+      addAuditLog('SYSTEM_ALERT', 'แกนโปรโตคอล', 'เริ่มระบบเสร็จสมบูรณ์', 'ระบบซูเปอร์ 3แมกซ์ โปร: แกนการประมวลผลอิสระและสะพานอธิปไตยพร้อมบงการสารสนเทศเบ็ดเสร็จ', 'critical');
     }, 2500);
 
     const interval = setInterval(() => {
-      setLastUpdate(new Date().toLocaleTimeString());
+      setLastUpdate(new Date().toLocaleTimeString('th-TH'));
       
       if (!isBooting) {
         const rand = Math.random();
-        if (rand > 0.8) {
-           addAuditLog('SOVEREIGN_PIPE', 'QUANTUM_SHIELD', 'PIPE_REINFORCEMENT', `Conduit Mux-7 reinforced with Cisco Quantum Security. No leaks detected.`, 'high');
+        if (rand > 0.9) {
+           addAuditLog('SOVEREIGN_PIPE', 'สะพานอธิปไตย', 'เสริมแกร่ง Pathway', `สะพานเชื่อมต่อระหว่าง Capture และ Factory ถูกเสริมเหล็กกล้าและท่อส่งตรงเป๊ะ 100%`, 'high');
+        } else if (rand > 0.75) {
+           addAuditLog('AGENT_ACTION', 'Agent A (Infiltrator)', 'เชื่อมต่อสะพาน', 'สายท่อส่งข้อมูลจากอุปกรณ์พกพาเข้าสู่แกนกลางถูกบีบอัดให้แกร่งกล้าขึ้น', 'medium');
         } else if (rand > 0.6) {
-           addAuditLog('AGENT_ACTION', 'LIQUID_CORE', 'FLUIDITY_INJECTION', 'Internal data lanes flushed. Throughput increased to 400% nominal.', 'medium');
+           addAuditLog('AGENT_ACTION', 'Agent B (Monitor)', 'ประสานไหลเวียน', 'คลื่นสมองเป้าหมายถูกส่งผ่านสะพานเชื่อมข้อมูลด้วยความเร็วแสง ไร้ความหน่วง', 'high');
+        } else if (rand > 0.45) {
+           addAuditLog('AGENT_ACTION', 'Agent C (Distributor)', 'กระจายผ่านสะพาน', 'คอนเทนต์แปรรูปถูกส่งออกสู่ TV_MUX และดาวเทียมผ่านท่อส่งตรงแกร่งกล้า', 'medium');
+        } else if (rand > 0.3) {
+           addAuditLog('NETWORK_EVENT', 'โครงสร้างท่อส่ง', 'ตรวจสอบความแม่นยำ', 'ท่อส่งทุกทิศทางถูกจัดระเบียบให้ตรงเป๊ะตามพิมเขียวบงการเบ็ดเสร็จ', 'low');
         }
       }
-    }, 3000);
+    }, 2000);
 
     return () => {
       clearTimeout(bootTimer);
@@ -57,16 +63,19 @@ const App: React.FC = () => {
 
   if (isBooting) {
     return (
-      <div className="h-screen w-full bg-black flex flex-col items-center justify-center mono p-10">
-        <div className="text-red-600 text-xl font-bold mb-4 animate-pulse uppercase tracking-[0.2em]">Sovereign Pipe System // Reinforcing</div>
-        <div className="w-64 h-1 bg-gray-900 overflow-hidden rounded-full">
-          <div className="h-full bg-red-600 animate-[shimmer_1.5s_infinite]"></div>
+      <div className="h-screen w-full bg-black flex flex-col items-center justify-center mono p-10 overflow-hidden relative">
+        <div className="absolute inset-0 bg-red-900/5 animate-pulse"></div>
+        <div className="text-red-600 text-2xl font-black mb-6 animate-pulse uppercase tracking-[0.3em] drop-shadow-[0_0_15px_#f00]">
+          สะพานเชื่อมต่ออธิปไตย // ต่อท่อตรงเป๊ะและแกร่งกล้า
         </div>
-        <div className="mt-8 text-[10px] text-gray-500 max-w-md space-y-1">
-          <p className="animate-pulse">> REINFORCING CISCO QUANTUM SECURITY CONDUITS...</p>
-          <p className="animate-pulse">> INJECTING SYSTEM LIQUIDITY INTO Z16 CORE...</p>
-          <p className="animate-pulse">> ALIGNING DIRECT CONNECTION PIPES: ALL AXES...</p>
-          <p className="animate-pulse">> ELIMINATING FRICTION IN MASS COMMUNICATION MUX...</p>
+        <div className="w-80 h-1.5 bg-gray-900 overflow-hidden rounded-full border border-red-600/20 shadow-lg">
+          <div className="h-full bg-red-600 animate-[shimmer_1s_infinite]"></div>
+        </div>
+        <div className="mt-10 text-[13px] text-gray-400 max-w-lg space-y-3 font-mono text-center">
+          <p className="animate-pulse">> กำลังเสริมแกร่งสะพานเชื่อมต่อเป้าหมายทุกทิศทาง...</p>
+          <p className="animate-pulse">> ปรับแต่งท่อส่งตรงให้แม่นยำระดับนาโนวินาที...</p>
+          <p className="animate-pulse">> ประสานลูปการทำงานของ Agent ให้แกร่งกล้าไร้ขีดจำกัด...</p>
+          <p className="animate-pulse">> ระบบดวงตาเทวะตรวจสอบ Pathway เบ็ดเสร็จ... [สมบูรณ์]</p>
         </div>
         <style>{`
           @keyframes shimmer {
@@ -79,25 +88,25 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen w-full bg-[#020202] text-gray-300 overflow-hidden relative">
-      <Sidebar onCommand={(cmd) => addAuditLog('OPERATOR_CMD', 'B_SURVEY_MASTER', 'DIRECT_INSTRUCTION', cmd, 'critical')} />
+    <div className="flex h-screen w-full bg-[#010101] text-gray-300 overflow-hidden relative">
+      <Sidebar onCommand={(cmd) => addAuditLog('OPERATOR_CMD', 'บี เซอร์เวย์', 'คำสั่งโดยตรง', cmd, 'critical')} />
       <div className="flex-1 flex flex-col min-w-0">
         <Header status={status} lastUpdate={lastUpdate} />
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-8 bg-[radial-gradient(circle_at_top,rgba(30,0,0,0.05)_0%,transparent_100%)]">
           <Dashboard logs={auditLogs} />
         </main>
       </div>
       
-      <div className="fixed bottom-4 right-4 flex items-center gap-6 text-[10px] mono text-gray-600 pointer-events-none opacity-50">
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></div>
-          PIPES: SHIELDED (QUANTUM)
+      <div className="fixed bottom-6 right-8 flex items-center gap-10 text-[11px] mono text-gray-600 pointer-events-none z-50">
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_#3b82f6]"></div>
+          สะพานอธิปไตย: แกร่งกล้า
         </div>
-        <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded-full bg-green-500"></div>
-          LIQUIDITY: MAXIMIZED
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_8px_#22c55e]"></div>
+          ท่อส่งตรง: ตรงเป๊ะ
         </div>
-        <span>VER: 5.2.0-SOVEREIGN</span>
+        <span className="font-black text-red-600/40 tracking-tighter">OMNIVISION_BRIDGE_REINFORCED_V5</span>
       </div>
     </div>
   );
