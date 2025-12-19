@@ -20,10 +20,10 @@ const App: React.FC = () => {
   ]);
 
   const [agents, setAgents] = useState<AutonomousAgent[]>([
-    { id: 'SIU-01', name: 'Deep Core Auditor', department: 'Underground', specialty: 'Geotechnical Logic', status: 'SCANNING', knowledgeLevel: 99.8 },
-    { id: 'SIU-02', name: 'Abyssal Guardian', department: 'Underwater', specialty: 'Fluid Encryption', status: 'SCANNING', knowledgeLevel: 99.5 },
-    { id: 'SIU-03', name: 'Ionospheric Sentinel', department: 'Aerial', specialty: 'Wave Sovereignty', status: 'SCANNING', knowledgeLevel: 99.9 },
-    { id: 'SIU-04', name: 'Omni-Logic Overseer', department: 'LogicCore', specialty: 'Redundant Synthesis', status: 'IDLE', knowledgeLevel: 100.0 },
+    { id: 'SIU-01', name: 'Deep Core Auditor', department: 'Underground', specialty: 'Geotechnical Logic & Substrata Encryption', status: 'SCANNING', knowledgeLevel: 99.8 },
+    { id: 'SIU-02', name: 'Abyssal Guardian', department: 'Underwater', specialty: 'Hydro-dynamic Data Fluidity', status: 'SCANNING', knowledgeLevel: 99.5 },
+    { id: 'SIU-03', name: 'Ionospheric Sentinel', department: 'Aerial', specialty: 'Wave Sovereignty & Atmos-Security', status: 'SCANNING', knowledgeLevel: 99.9 },
+    { id: 'SIU-04', name: 'Omni-Logic Overseer', department: 'LogicCore', specialty: 'Redundant Neural Synthesis', status: 'IDLE', knowledgeLevel: 100.0 },
   ]);
 
   const addAuditLog = useCallback((
@@ -64,7 +64,7 @@ const App: React.FC = () => {
             // Activate Agent for this department
             setAgents(currentAgents => currentAgents.map(agent => {
               if (agent.department === pipe.type) {
-                return { ...agent, status: 'SOLVING', currentTask: `Fixing ${pipe.id} integrity leak` };
+                return { ...agent, status: 'SOLVING', currentTask: `Independent repair initiated on ${pipe.id}: Resolving ${pipe.type} fragmentation.` };
               }
               return agent;
             }));
@@ -73,7 +73,7 @@ const App: React.FC = () => {
               'INTELLIGENCE_UNIT', 
               agents.find(a => a.department === pipe.type)?.name || 'System Agent',
               'INTERVENTION_INITIATED',
-              `ตรวจพบความสมบูรณ์ท่อส่ง ${pipe.id} วิกฤต (${newIntegrity.toFixed(1)}%) กำลังดำเนินการแก้ไขแบบอิสระ`,
+              `DETECTED: ${pipe.id} critical integrity fail (${newIntegrity.toFixed(1)}%). SIU Unit deploying independent resolution logic.`,
               'high'
             );
           }
@@ -96,8 +96,8 @@ const App: React.FC = () => {
               addAuditLog(
                 'SOVEREIGN_PIPE', 
                 `Sovereign Pipe ${pipe.id}`, 
-                `INTEGRITY_RESTORED`, 
-                `การกู้คืนโดย Intelligence Unit เสร็จสิ้น สถานะกลับสู่สภาวะอธิปไตยปกติ`, 
+                `RECOVERY_COMPLETE`, 
+                `The departmental SIU has successfully restored integrity. Sovereign flow secured at 100%.`, 
                 'medium'
               );
             }
@@ -115,7 +115,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const bootTimer = setTimeout(() => {
       setIsBooting(false);
-      addAuditLog('SYSTEM_ALERT', 'OmniVision Core', 'Workforce Integrated', 'Autonomous Intelligence Units deployed across all departments', 'critical');
+      addAuditLog('SYSTEM_ALERT', 'OmniVision Core', 'Workforce Integrated', 'Autonomous Intelligence Units (SIU) with Omniscient Knowledge deployed across all departments.', 'critical');
     }, 1500);
 
     return () => clearTimeout(bootTimer);
@@ -132,9 +132,9 @@ const App: React.FC = () => {
           <div className="h-full bg-gradient-to-r from-red-600 via-white to-blue-600 animate-[shimmer_0.3s_infinite] bg-[length:20%_100%]"></div>
         </div>
         <div className="mt-12 text-[16px] max-w-lg space-y-4 font-mono font-black italic">
-          <p className="animate-pulse">> กำลังปลุกพนักงานดิจิทัลรอบรู้ (Omniscient Staff)... [OK]</p>
-          <p className="animate-pulse">> เชื่อมต่อจิตสำนึกอิสระแต่ละแผนก... [OK]</p>
-          <p className="animate-pulse">> ติดตั้งโมดูลแก้ไขปัญหาอัตโนมัติ... [READY]</p>
+          <p className="animate-pulse">> Awakening Omniscient Digital Staff... [OK]</p>
+          <p className="animate-pulse">> Mapping Independent Departmental Logic... [OK]</p>
+          <p className="animate-pulse">> Synchronizing Sovereign Knowledge-Bases... [READY]</p>
         </div>
         <style>{`
           @keyframes shimmer { 0% { transform: translateX(-200%); } 100% { transform: translateX(200%); } }
@@ -160,7 +160,7 @@ const App: React.FC = () => {
       <div className="fixed bottom-6 right-8 flex items-center gap-10 text-[11px] mono text-white pointer-events-none z-50 font-black">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-blue-500 animate-ping shadow-[0_0_15px_#00f]"></div>
-          Workforce: Autonomous & Omniscient
+          Workforce: Autonomous & Omniscient (Active)
         </div>
         <span className="font-black text-white/40 tracking-tighter uppercase text-lg">SOVEREIGN_WORKFORCE_V15</span>
       </div>

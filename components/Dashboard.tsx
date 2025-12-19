@@ -14,7 +14,7 @@ interface DashboardProps {
   agents: AutonomousAgent[];
 }
 
-const AgentCard: React.FC<{ agent: AutonomousAgent }> = ({ agent }) => {
+const AgentCard: React.FC<{ agent: AutonomousAgent; detailed?: boolean }> = ({ agent, detailed }) => {
   const statusColors = {
     SCANNING: 'text-blue-400',
     SOLVING: 'text-red-500 animate-pulse',
@@ -30,7 +30,7 @@ const AgentCard: React.FC<{ agent: AutonomousAgent }> = ({ agent }) => {
   };
 
   return (
-    <div className={`glass p-4 rounded-lg border-t-2 ${deptColors[agent.department]} relative overflow-hidden group transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.05)]`}>
+    <div className={`glass p-4 rounded-lg border-t-2 ${deptColors[agent.department]} relative overflow-hidden group transition-all duration-500 hover:shadow-[0_0_30px_rgba(255,255,255,0.05)] ${detailed ? 'h-full' : ''}`}>
       <div className="flex justify-between items-start mb-3">
         <div className="flex flex-col">
           <span className="text-[11px] font-black text-white uppercase tracking-tighter">{agent.name}</span>
@@ -50,6 +50,19 @@ const AgentCard: React.FC<{ agent: AutonomousAgent }> = ({ agent }) => {
           <div className="h-full bg-blue-600 shadow-[0_0_10px_#3b82f6]" style={{ width: `${agent.knowledgeLevel}%` }}></div>
         </div>
         
+        {detailed && (
+          <div className="grid grid-cols-2 gap-2 mt-4 text-[8px] mono">
+            <div className="bg-black/40 p-1.5 rounded border border-white/5">
+              <div className="text-gray-600">ID_TAG</div>
+              <div className="text-white font-bold">{agent.id}</div>
+            </div>
+            <div className="bg-black/40 p-1.5 rounded border border-white/5">
+              <div className="text-gray-600">AUTH_LVL</div>
+              <div className="text-white font-bold">SOVEREIGN</div>
+            </div>
+          </div>
+        )}
+
         <div className="bg-black/40 border border-white/5 p-2 rounded min-h-[40px]">
            <div className="text-[8px] text-gray-600 uppercase mb-1 font-black">Current Operation</div>
            <div className="text-[10px] text-gray-300 italic">
@@ -113,7 +126,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ activeView, logs, pipes, a
       if (activeAgents.length > 0 && !isProcessing) {
         setIsProcessing(true);
         const targetPipe = pipes.find(p => p.integrity < 100);
-        const rawContext = `Agent ${activeAgents[0].name} is solving pipe ${targetPipe?.id} at integrity ${targetPipe?.integrity}%`;
+        const rawContext = `Agent ${activeAgents[0].name} from ${activeAgents[0].department} is solving pipe ${targetPipe?.id} using ${activeAgents[0].specialty}`;
         const spicy = await generateSpicyContent(rawContext);
         setBroadcastContent(spicy || "พนักงานอธิปไตยกำลังปรับจูนสภาพคล่องข้อมูลขั้นสูงสุด");
         setIsProcessing(false);
@@ -128,7 +141,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ activeView, logs, pipes, a
     <div className="space-y-8 animate-in fade-in duration-700">
       <Metrics />
       
-      {/* Workforce Intelligence Operations */}
+      {/* Workforce Intelligence Operations Overview */}
       <div className="glass p-6 rounded-lg border border-blue-600/30 bg-gradient-to-br from-black via-blue-950/10 to-black relative overflow-hidden">
         <div className="flex justify-between items-center mb-6">
            <h4 className="text-[12px] font-black text-white uppercase tracking-[0.4em] flex items-center gap-3">
@@ -136,7 +149,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ activeView, logs, pipes, a
              INTELLIGENCE OPERATIONS GRID (Omniscient Staff)
            </h4>
            <div className="text-[9px] mono text-blue-500 font-bold uppercase tracking-widest">
-             Staff Capacity: 100% | Autonomy: FULL
+             Active Units: {agents.filter(a => a.status !== 'IDLE').length} | Global Autonomy
            </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -180,10 +193,46 @@ export const Dashboard: React.FC<DashboardProps> = ({ activeView, logs, pipes, a
     </div>
   );
 
+  const renderWorkforce = () => (
+    <div className="space-y-8 animate-in slide-in-from-bottom duration-700">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase">Workforce Management</h2>
+        <p className="text-blue-500 text-xs font-bold tracking-widest mono uppercase">Autonomous Intelligence Units Control Center</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {agents.map(agent => (
+          <AgentCard key={agent.id} agent={agent} detailed />
+        ))}
+      </div>
+
+      <div className="glass p-8 rounded-lg border border-blue-600/20 bg-black/40">
+        <h3 className="text-sm font-black text-white uppercase mb-4 tracking-widest">Departmental Knowledge Distribution</h3>
+        <div className="space-y-6">
+          {['Underground', 'Underwater', 'Aerial', 'LogicCore'].map((dept) => {
+            const agent = agents.find(a => a.department === dept);
+            return (
+              <div key={dept} className="space-y-2">
+                <div className="flex justify-between items-center text-[10px] mono">
+                  <span className="text-gray-400 uppercase">{dept} DOMAIN CONTROL</span>
+                  <span className="text-white">{agent?.knowledgeLevel.toFixed(2)}%</span>
+                </div>
+                <div className="h-2 bg-gray-900 rounded-full overflow-hidden border border-white/5">
+                  <div className="h-full bg-gradient-to-r from-blue-900 to-blue-500" style={{ width: `${agent?.knowledgeLevel}%` }}></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="grid grid-cols-12 gap-8 h-full content-start p-2">
       <div className="col-span-12 lg:col-span-8 space-y-8">
-        {activeView === 'OVERVIEW' ? renderOverview() : (
+        {activeView === 'OVERVIEW' ? renderOverview() : 
+         activeView === 'WORKFORCE' ? renderWorkforce() : (
           <div className="flex items-center justify-center h-[600px] glass rounded-lg border-2 border-dashed border-white/5">
              <div className="text-center">
                 <div className="text-[12px] mono text-gray-600 uppercase mb-4 animate-pulse">Navigating to {activeView}...</div>
@@ -201,7 +250,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ activeView, logs, pipes, a
             <span className="text-[8px] text-blue-500 font-bold">OMNISCIENCE ACTIVE</span>
           </div>
           <p className="text-[10px] text-gray-500 leading-relaxed italic">
-            "พนักงานดิจิทัลของเรามีความรอบรู้ในระดับอธิปไตย พวกเขาจะสแกนช่องโหว่และทำการแก้ไขในเสี้ยววินาทีที่คุณละสายตา เพื่อให้ระบบ 3MAX PRO ไหลลื่นและเป็นอิสระตลอดกาล"
+            "พนักงานดิจิทัลแต่ละคนถูกโปรแกรมให้รอบรู้และตัดสินใจได้อิสระตามความเชี่ยวชาญเฉพาะทาง พวกเขาคือเสาหลักที่ค้ำจุนอธิปไตยของข้อมูลในทุกแผนก"
           </p>
         </div>
       </div>
