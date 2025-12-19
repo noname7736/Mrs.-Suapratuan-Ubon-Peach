@@ -27,6 +27,16 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ logs }) => {
     }
   };
 
+  // Fixed fractionalSecondDigits error by using manual string formatting
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const h = String(date.getHours()).padStart(2, '0');
+    const m = String(date.getMinutes()).padStart(2, '0');
+    const s = String(date.getSeconds()).padStart(2, '0');
+    const ms = String(date.getMilliseconds()).padStart(3, '0');
+    return `${h}:${m}:${s}.${ms}`;
+  };
+
   return (
     <div className="flex-1 flex flex-col glass rounded-lg border border-red-900/10 overflow-hidden relative">
       <div className="p-4 border-b border-white/5 flex justify-between items-center bg-black/60 backdrop-blur-xl">
@@ -49,7 +59,7 @@ export const ActivityFeed: React.FC<ActivityFeedProps> = ({ logs }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-gray-600 font-bold shrink-0 text-[9px]">
-                  [{new Date(log.timestamp).toLocaleTimeString('en-GB', { hour12: false, minute: '2-digit', second: '2-digit' })}]
+                  [{formatTimestamp(log.timestamp)}]
                 </span>
                 <span className={`px-1.5 py-0.5 rounded text-[9px] font-black tracking-tighter ${getSeverityColor(log.severity)}`}>
                   {getCategoryPrefix(log.category)}
